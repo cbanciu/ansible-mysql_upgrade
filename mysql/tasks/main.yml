@@ -49,7 +49,14 @@
   service:
     name: "{{ mysql_service_name }}"
     state: stopped
+  register: mysql_status
   when: backup_method|lower == "rsync"
+  tags: mysql
+
+- name: Backup using rsync
+  shell: rsync -a {{ datadir['msg'].0.1 }} {{ datadir['msg'].0.1[:-1] }}.$(echo $(date +"%y%m%d-%H%M"))
+  when: mysql_status.changed
+  tags: mysql
 
 
-#- name: Backup using rsync
+

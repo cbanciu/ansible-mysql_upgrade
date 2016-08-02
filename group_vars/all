@@ -1,1 +1,1 @@
-backup_method:
+backup_method: rsync
