@@ -1,0 +1,4 @@
+credentials/
+.DS_Store
+*.retry
+hosts
