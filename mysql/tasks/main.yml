@@ -1,0 +1,55 @@
+---
+- name: Get service name
+  shell: rpm -qa | egrep -i "maria|mysql|percona" | grep server | cut -d- -f1
+  register: service_name
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version in ["6", "7"]
+  tags: mysql
+
+- name: Set MariaDB name on RHEL 6
+  set_fact: 
+    mysql_service_name: "mysql"
+  when: ansible_os_family == "RedHat" and service_name.stdout[0:7]|lower == "mariadb" and hostvars[inventory_hostname].ansible_distribution_major_version == "6"
+  tags: mysql
+
+- name: Set MariaDB name on RHEL 7
+  set_fact: 
+    mysql_service_name: "mariadb.service"
+  when: ansible_os_family == "RedHat" and service_name.stdout[0:7]|lower == "mariadb" and hostvars[inventory_hostname].ansible_distribution_major_version == "7"
+  tags: mysql
+
+- name: Set Percona name
+  set_fact: 
+    mysql_service_name: "mysql"
+  when: ansible_os_family == "RedHat" and service_name.stdout[0:7]|lower == "percona"
+  tags: mysql
+
+- name: Set MySQL name
+  set_fact: 
+    mysql_service_name: "mysqld"
+  when: ansible_os_family == "RedHat" and service_name.stdout[0:5]|lower == "mysql"
+  tags: mysql
+
+- name: Install MySQL Python on RHEL
+  yum: 
+    name=MySQL-python
+    state=present
+  when: ansible_os_family == "RedHat"
+  tags: mysql
+
+- name: Get MySQL info
+  mysql_variables:
+    variable: datadir
+  register: datadir
+  tags: mysql
+
+- debug: msg="{{ datadir['msg'].0.1 }}"
+  tags: mysql
+
+- name: Stop MySQL for backups
+  service:
+    name: "{{ mysql_service_name }}"
+    state: stopped
+  when: backup_method|lower == "rsync"
+
+
+#- name: Backup using rsync
