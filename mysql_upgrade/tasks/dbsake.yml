@@ -1,0 +1,14 @@
+---
+- name: Download dbsake
+  get_url:
+    url=http://get.dbsake.net
+    dest=/root/dbsake
+  register: dbsake
+  tags: dbsake
+
+- name: chmod +x dbsake
+  file:
+    path=/root/dbsake
+    mode=755
+  when: dbsake.changed
+  tags: dbsake

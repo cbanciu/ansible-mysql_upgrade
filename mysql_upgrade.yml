@@ -3,4 +3,4 @@
     user: root
     sudo: yes
     roles:
-      - { role: mysql, tags: mysql }
+      - { role: mysql_upgrade, tags: mysql_upgrade }

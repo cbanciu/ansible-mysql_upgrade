@@ -3,47 +3,52 @@
   shell: rpm -qa | egrep -i "maria|mysql|percona" | grep server | cut -d- -f1
   register: service_name
   when: ansible_os_family == "RedHat" and ansible_distribution_major_version in ["6", "7"]
-  tags: mysql
+  tags: mysql_upgrade
 
 - name: Set MariaDB name on RHEL 6
   set_fact: 
     mysql_service_name: "mysql"
   when: ansible_os_family == "RedHat" and service_name.stdout[0:7]|lower == "mariadb" and hostvars[inventory_hostname].ansible_distribution_major_version == "6"
-  tags: mysql
+  tags: mysql_upgrade
 
 - name: Set MariaDB name on RHEL 7
   set_fact: 
     mysql_service_name: "mariadb.service"
   when: ansible_os_family == "RedHat" and service_name.stdout[0:7]|lower == "mariadb" and hostvars[inventory_hostname].ansible_distribution_major_version == "7"
-  tags: mysql
+  tags: mysql_upgrade
 
 - name: Set Percona name
   set_fact: 
     mysql_service_name: "mysql"
   when: ansible_os_family == "RedHat" and service_name.stdout[0:7]|lower == "percona"
-  tags: mysql
+  tags: mysql_upgrade
 
 - name: Set MySQL name
   set_fact: 
     mysql_service_name: "mysqld"
   when: ansible_os_family == "RedHat" and service_name.stdout[0:5]|lower == "mysql"
-  tags: mysql
+  tags: mysql_upgrade
 
 - name: Install MySQL Python on RHEL
   yum: 
     name=MySQL-python
     state=present
   when: ansible_os_family == "RedHat"
-  tags: mysql
+  tags: mysql_upgrade
 
 - name: Get MySQL info
   mysql_variables:
-    variable: datadir
-  register: datadir
-  tags: mysql
+    variable: "{{ item }}"
+  with_items:
+    - datadir
+    - version
+  register: mysql_vars
+  tags: mysql_upgrade
 
-- debug: msg="{{ datadir['msg'].0.1 }}"
-  tags: mysql
+- name: Set MySQL version 
+  set_fact:
+    mysql_version: "{{ mysql_vars['results'][1]['msg'][0][1][0:3] }}"
+  tags: mysql_upgrade
 
 - name: Stop MySQL for backups
   service:
@@ -51,12 +56,32 @@
     state: stopped
   register: mysql_status
   when: backup_method|lower == "rsync"
-  tags: mysql
+  tags: mysql_upgrade
 
 - name: Backup using rsync
-  shell: rsync -a {{ datadir['msg'].0.1 }} {{ datadir['msg'].0.1[:-1] }}.$(echo $(date +"%y%m%d-%H%M"))
+  shell: rsync -a {{ mysql_vars['results'][0]['msg'][0][1] }} {{ mysql_vars['results'][0]['msg'][0][1][:-1] }}.$(echo $(date +"%y%m%d-%H%M"))
   when: mysql_status.changed
-  tags: mysql
+  tags: mysql_upgrade
 
+- name: dbsake
+  include: dbsake.yml
+  tags: mysql_upgrade
 
+- name: Upgrade my.cnf
+  include: upgrade_mycnf.yml
+  tags: mysql_upgrade
 
+- name: Upgrade MySQL
+  include: mysql.yml
+  when: service_name['stdout_lines'][0][0:5] == 'mysql'
+  tags: mysql_upgrade
+
+- name: Upgrade Percona
+  include: percona.yml
+  when: service_name['stdout_lines'][0]|lower == 'percona'
+  tags: mysql_upgrade
+
+- name: Upgrade MariaDB
+  include: maria.yml
+  when: service_name['stdout_lines'][0]|lower == 'mariadb'
+  tags: mysql_upgrade
