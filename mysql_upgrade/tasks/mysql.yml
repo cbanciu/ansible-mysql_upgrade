@@ -17,7 +17,7 @@
   when: ansible_os_family == 'RedHat'
 
 - name: Backup old config file
-  shell: cp -aL /etc/my.cnf /etc/my.cnf.$(date +%Y%m%d)
+  shell: cp -aL {{ my_cnf }} /etc/my.cnf.$(date +%Y%m%d)
 
 - name: Remove old MySQL 5.1 packages
   shell: rpm -e --nodeps mysql mysql-server mysql-libs
@@ -63,16 +63,16 @@
   when: mysql_version == "5.6" and ansible_distribution_major_version in ["6", "7"]
 
 - name: Update my.cnf
-  shell: cp -a /etc/my.cnf55 /etc/my.cnf
+  shell: cp -a /etc/my.cnf55 {{ my_cnf }}
   when: mysql_version == "5.1"
 
 - name: Update my.cnf
-  shell: cp -a /etc/my.cnf56 /etc/my.cnf
+  shell: cp -a /etc/my.cnf56 {{ my_cnf }}
   when: mysql_version == "5.5"
 
 
 - name: Update my.cnf
-  shell: cp -a /etc/my.cnf57 /etc/my.cnf
+  shell: cp -a /etc/my.cnf57 {{ my_cnf }}
   when: mysql_version == "5.6"
 
 - name: Restart MySQL
