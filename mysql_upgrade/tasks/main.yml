@@ -8,13 +8,13 @@
 - name: Set MariaDB name on RHEL 6
   set_fact: 
     mysql_service_name: "mysql"
-  when: ansible_os_family == "RedHat" and service_name.stdout[0:7]|lower == "mariadb" and hostvars[inventory_hostname].ansible_distribution_major_version == "6"
+  when: ansible_os_family == "RedHat" and service_name.stdout[0:7]|lower == "mariadb" and ansible_distribution_major_version == "6"
   tags: mysql_upgrade
 
 - name: Set MariaDB name on RHEL 7
   set_fact: 
     mysql_service_name: "mariadb.service"
-  when: ansible_os_family == "RedHat" and service_name.stdout[0:7]|lower == "mariadb" and hostvars[inventory_hostname].ansible_distribution_major_version == "7"
+  when: ansible_os_family == "RedHat" and service_name.stdout[0:7]|lower == "mariadb" and ansible_distribution_major_version == "7"
   tags: mysql_upgrade
 
 - name: Set Percona name
@@ -48,6 +48,10 @@
 - name: Set MySQL version 
   set_fact:
     mysql_version: "{{ mysql_vars['results'][1]['msg'][0][1][0:3] }}"
+  tags: mysql_upgrade
+
+- fail: "You are running the latest MySQL version"
+  when: mysql_vars['results'][1]['msg'][0][1][0:3] == "5.7"
   tags: mysql_upgrade
 
 - name: Stop MySQL for backups

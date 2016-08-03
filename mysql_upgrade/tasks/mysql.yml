@@ -15,3 +15,75 @@
     name: "https://{{ ius_distribution_abbrev }}{{ ansible_distribution_major_version }}.iuscommunity.org/ius-release.rpm"
     state: present
   when: ansible_os_family == 'RedHat'
+
+- name: Backup old config file
+  shell: cp -aL /etc/my.cnf /etc/my.cnf.$(date +%Y%m%d)
+
+- name: Remove old MySQL 5.1 packages
+  shell: rpm -e --nodeps mysql mysql-server mysql-libs
+  when: mysql_version == "5.1"
+
+- name: Remove old MySQL 5.5 packages
+  shell: rpm -e --nodeps mysql55 mysql55-server mysql55-libs
+  when: mysql_version == "5.5"
+
+- name: Remove old MySQL 5.6 packages
+  shell: rpm -e --nodeps mysql56u mysql56u-server mysql56u-libs mysql56u-common
+  when: mysql_version == "5.6" and ansible_distribution_major_version in ["6", "7"]
+
+- name: Install MySQL 5.5 from IUS
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - mysql55
+    - mysql55-server
+    - mysql55-libs
+    - mysqlclient16
+  when: mysql_version == "5.1"
+
+- name: Install MySQL 5.6 from IUS
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - mysql56u
+    - mysql56u-server
+    - mysql56u-libs
+  when: mysql_version == "5.5" and ansible_distribution_major_version in ["6", "7"]
+
+- name: Install MySQL 5.7 from IUS
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - mysql57u
+    - mysql57u-server
+    - mysql57u-libs
+  when: mysql_version == "5.6" and ansible_distribution_major_version in ["6", "7"]
+
+- name: Update my.cnf
+  shell: cp -a /etc/my.cnf55 /etc/my.cnf
+  when: mysql_version == "5.1"
+
+- name: Update my.cnf
+  shell: cp -a /etc/my.cnf56 /etc/my.cnf
+  when: mysql_version == "5.5"
+
+
+- name: Update my.cnf
+  shell: cp -a /etc/my.cnf57 /etc/my.cnf
+  when: mysql_version == "5.6"
+
+- name: Restart MySQL
+  service:
+    name: "{{ mysql_service_name }}"
+    state: restarted
+
+- name: Run MySQL upgrade
+  shell: mysql_upgrade 
+
+- name: Restart MySQL
+  service:
+    name: "{{ mysql_service_name }}"
+    state: restarted

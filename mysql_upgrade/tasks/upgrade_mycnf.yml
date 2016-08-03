@@ -11,5 +11,5 @@
 
 - name: Upgrade 5.6 to 5.7
   shell: /root/dbsake upgrade-mycnf -t 5.7 > /etc/my.cnf57
-  when: mysql_version == "5.7"
+  when: mysql_version == "5.6"
   tags: upgrade_mycnf
