@@ -1,7 +1,4 @@
 ---
-- name: Backup old config file
-  shell: cp -aL "{{ my_cnf }}" /etc/my.cnf.$(date +%Y%m%d)
-
 - name: Remove old Percona packages
   shell: rpm -e --nodeps $(rpm -qa | grep ^Percona-Server)
 
@@ -23,7 +20,7 @@
     - Percona-Server-server-56
     - Percona-Server-client-56
     - Percona-Server-shared-56
-  when: mysql_version == "5.5" and ansible_distribution_major_version in ["6", "7"]
+  when: mysql_version == "5.5" 
 
 - name: Install MySQL 5.7 from Percona
   yum:
@@ -33,7 +30,7 @@
     - Percona-Server-server-57
     - Percona-Server-client-57
     - Percona-Server-shared-57
-  when: mysql_version == "5.6" and ansible_distribution_major_version in ["6", "7"]
+  when: mysql_version == "5.6"
 
 - name: Install Percona-shared-compat
   yum:

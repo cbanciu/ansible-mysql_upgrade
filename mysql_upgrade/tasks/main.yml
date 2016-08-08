@@ -41,7 +41,7 @@
     variable: "{{ item }}"
   with_items:
     - datadir
-    - innodb_version
+    - version
   register: mysql_vars
   tags: mysql_upgrade
 
