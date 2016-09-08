@@ -1,4 +1,8 @@
 ---
+- name: Fail if not RHEL
+  fail: msg="This playbook only runs on RHEL like servers."
+  when: ansible_os_family != "RedHat"
+
 - name: Get service name
   shell: rpm -qa | egrep -i "maria|mysql|percona" | grep server | cut -d- -f1
   register: service_name
@@ -65,7 +69,7 @@
 - name: Backup using rsync
   shell: rsync -a {{ mysql_vars['results'][0]['msg'][0][1] }} {{ mysql_vars['results'][0]['msg'][0][1][:-1] }}.$(echo $(date +"%y%m%d-%H%M"))
   when: mysql_status.changed
-  async: 10800
+  async: "{{ backup_time | default(10800, true) }}"
   poll: 10
   tags: mysql_upgrade
 
@@ -80,7 +84,7 @@
 - name: Backup using holland
   shell: holland bk
   when: backup_method|lower == "holland"
-  async: 7200
+  async: "{{ backup_time | default(7200, true) }}"
   poll: 10
   tags: mysql_upgrade
 

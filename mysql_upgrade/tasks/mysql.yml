@@ -1,5 +1,6 @@
 ---
-
+- name: Add IUS repo
+  include: ius.yml
 
 - name: Remove old MySQL 5.1 packages
   shell: rpm -e --nodeps mysql mysql-server mysql-libs

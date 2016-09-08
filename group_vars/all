@@ -1,2 +1,3 @@
 backup_method:
+backup_time:
 my_cnf: /etc/my.cnf
