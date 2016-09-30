@@ -10,7 +10,7 @@
     - Percona-Server-server-55
     - Percona-Server-client-55
     - Percona-Server-shared-55
-  when: mysql_version == "5.1"
+  when: mysql_version.startswith("5.1")
 
 - name: Install MySQL 5.6 from Percona
   yum:
@@ -20,7 +20,7 @@
     - Percona-Server-server-56
     - Percona-Server-client-56
     - Percona-Server-shared-56
-  when: mysql_version == "5.5" 
+  when: mysql_version.startswith("5.5")
 
 - name: Install MySQL 5.7 from Percona
   yum:
@@ -30,7 +30,7 @@
     - Percona-Server-server-57
     - Percona-Server-client-57
     - Percona-Server-shared-57
-  when: mysql_version == "5.6"
+  when: mysql_version.startswith("5.6")
 
 - name: Install Percona-shared-compat
   yum:
@@ -40,16 +40,16 @@
 
 - name: Update my.cnf
   shell: cp -a /etc/my.cnf55 "{{ my_cnf }}"
-  when: mysql_version == "5.1"
+  when: mysql_version.startswith("5.1")
 
 - name: Update my.cnf
-  shell: cp -a /etc/my.cnf56 "{{ my_cnf }}" 
-  when: mysql_version == "5.5"
+  shell: cp -a /etc/my.cnf56 "{{ my_cnf }}"
+  when: mysql_version.startswith("5.5")
 
 
 - name: Update my.cnf
   shell: cp -a /etc/my.cnf57 "{{ my_cnf }}"
-  when: mysql_version == "5.6"
+  when: mysql_version.startswith("5.6")
 
 - name: Restart MySQL
   service:
@@ -57,7 +57,7 @@
     state: restarted
 
 - name: Run MySQL upgrade
-  shell: mysql_upgrade 
+  shell: mysql_upgrade
 
 - name: Restart MySQL
   service:

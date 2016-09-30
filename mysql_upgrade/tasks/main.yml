@@ -49,13 +49,13 @@
   register: mysql_vars
   tags: mysql_upgrade
 
-- name: Set MySQL version 
+- name: Set MySQL version
   set_fact:
-    mysql_version: "{{ mysql_vars['results'][1]['msg'][0][1][0:3] }}"
+    mysql_version: "{{ mysql_vars['results'][1]['msg'][0][1] }}"
   tags: mysql_upgrade
 
 - fail: "You are running the latest MySQL version"
-  when: mysql_vars['results'][1]['msg'][0][1][0:3] == "5.7"
+  when: mysql_vars['results'][1]['msg'][0][1].startswith('5.7') or mysql_vars['results'][1]['msg'][0][1].startswith('10.1')
   tags: mysql_upgrade
 
 - name: Stop MySQL for backups
@@ -108,5 +108,5 @@
 
 - name: Upgrade MariaDB
   include: maria.yml
-  when: service_name['stdout_lines'][0]|lower == 'mariadb'
+  when: service_name['stdout_lines'][0][0:5]|lower == 'maria'
   tags: mysql_upgrade

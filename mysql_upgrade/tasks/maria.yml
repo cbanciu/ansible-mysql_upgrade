@@ -1,2 +1,40 @@
 ---
-- debug: msg="MariaDB"
+- name: Add IUS when 7
+  include: ius.yml
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"
+
+- name: Remove old MariaDB packages
+  shell: rpm -e --nodeps $(rpm -qa | egrep "MariaDB-*|mariadb-*")
+
+- name: Install MariaDB 10. from IUS on 7
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - mariadb100u
+    - mariadb100u-server
+    - mariadb100u-libs
+  when: mysql_version.startswith("5.5") and ansible_distribution_major_version == "7"
+
+- name: Install MariaDB 10.1 from IUS on 7
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - mariadb101u
+    - mariadb101u-server
+    - mariadb101u-libs
+  when: mysql_version.startswith("10.0") and ansible_distribution_major_version == "7"
+
+- name: Restart MySQL
+  service:
+    name: "{{ mysql_service_name }}"
+    state: restarted
+
+- name: Run MySQL upgrade
+  shell: mysql_upgrade
+
+- name: Restart MySQL
+  service:
+    name: "{{ mysql_service_name }}"
+    state: restarted
