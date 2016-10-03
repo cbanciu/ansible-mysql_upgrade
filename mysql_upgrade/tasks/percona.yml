@@ -1,65 +1,18 @@
 ---
-- name: Remove old Percona packages
-  shell: rpm -e --nodeps $(rpm -qa | grep ^Percona-Server)
+- name: Upgrade to Percona 5.5
+  include: percona55.yml
+  when: (upgraded_version in [5.5, 5.6, 5.7]) and (mysql_version.startswith("5.1"))
 
-- name: Install MySQL 5.5 from Percona
-  yum:
-    name: "{{ item }}"
-    state: present
-  with_items:
-    - Percona-Server-server-55
-    - Percona-Server-client-55
-    - Percona-Server-shared-55
-  when: mysql_version.startswith("5.1")
+- name: Upgrade to Percona 5.6
+  include: mysql56.yml
+  when: upgraded_version in [5.6, 5.7] and ansible_distribution_major_version in ["6", "7"] and mysql_version.startswith("5.5")
 
-- name: Install MySQL 5.6 from Percona
-  yum:
-    name: "{{ item }}"
-    state: present
-  with_items:
-    - Percona-Server-server-56
-    - Percona-Server-client-56
-    - Percona-Server-shared-56
-  when: mysql_version.startswith("5.5")
-
-- name: Install MySQL 5.7 from Percona
-  yum:
-    name: "{{ item }}"
-    state: present
-  with_items:
-    - Percona-Server-server-57
-    - Percona-Server-client-57
-    - Percona-Server-shared-57
-  when: mysql_version.startswith("5.6")
+- name: Upgrade to Percona 5.7
+  include: mysql57.yml
+  when: upgraded_version in [5.7] and  ansible_distribution_major_version in ["6", "7"] and mysql_version.startswith("5.6")
 
 - name: Install Percona-shared-compat
   yum:
     name: Percona-Server-shared-compat
     state: present
   when: ansible_distribution_major_version == "6"
-
-- name: Update my.cnf
-  shell: cp -a /etc/my.cnf55 "{{ my_cnf }}"
-  when: mysql_version.startswith("5.1")
-
-- name: Update my.cnf
-  shell: cp -a /etc/my.cnf56 "{{ my_cnf }}"
-  when: mysql_version.startswith("5.5")
-
-
-- name: Update my.cnf
-  shell: cp -a /etc/my.cnf57 "{{ my_cnf }}"
-  when: mysql_version.startswith("5.6")
-
-- name: Restart MySQL
-  service:
-    name: "{{ mysql_service_name }}"
-    state: restarted
-
-- name: Run MySQL upgrade
-  shell: mysql_upgrade
-
-- name: Restart MySQL
-  service:
-    name: "{{ mysql_service_name }}"
-    state: restarted

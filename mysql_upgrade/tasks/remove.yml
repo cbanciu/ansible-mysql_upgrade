@@ -1,0 +1,4 @@
+---
+- name: Remove old Percona packages
+  shell: rpm -e --nodeps $(rpm -qa | grep ^Percona-Server)
+  when: service_name['stdout_lines'][0]|lower == 'percona'
