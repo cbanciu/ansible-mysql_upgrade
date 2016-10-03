@@ -10,31 +10,31 @@
   tags: mysql_upgrade
 
 - name: Set MariaDB name on RHEL 6
-  set_fact: 
+  set_fact:
     mysql_service_name: "mysql"
   when: ansible_os_family == "RedHat" and service_name.stdout[0:7]|lower == "mariadb" and ansible_distribution_major_version == "6"
   tags: mysql_upgrade
 
 - name: Set MariaDB name on RHEL 7
-  set_fact: 
+  set_fact:
     mysql_service_name: "mariadb.service"
   when: ansible_os_family == "RedHat" and service_name.stdout[0:7]|lower == "mariadb" and ansible_distribution_major_version == "7"
   tags: mysql_upgrade
 
 - name: Set Percona name
-  set_fact: 
+  set_fact:
     mysql_service_name: "mysql"
   when: ansible_os_family == "RedHat" and service_name.stdout[0:7]|lower == "percona"
   tags: mysql_upgrade
 
 - name: Set MySQL name
-  set_fact: 
+  set_fact:
     mysql_service_name: "mysqld"
   when: ansible_os_family == "RedHat" and service_name.stdout[0:5]|lower == "mysql"
   tags: mysql_upgrade
 
 - name: Install MySQL Python on RHEL
-  yum: 
+  yum:
     name=MySQL-python
     state=present
   when: ansible_os_family == "RedHat"
@@ -90,10 +90,6 @@
 
 - name: dbsake
   include: dbsake.yml
-  tags: mysql_upgrade
-
-- name: Upgrade my.cnf
-  include: upgrade_mycnf.yml
   tags: mysql_upgrade
 
 - name: Upgrade MySQL
