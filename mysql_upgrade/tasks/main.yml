@@ -6,19 +6,19 @@
 - name: Get service name
   shell: rpm -qa | egrep -i "maria|mysql|percona" | grep server | cut -d- -f1
   register: service_name
-  when: ansible_os_family == "RedHat" and ansible_distribution_major_version in ["6", "7"]
   tags: mysql_upgrade
 
 - name: Set MariaDB name on RHEL 6
   set_fact:
     mysql_service_name: "mysql"
-  when: ansible_os_family == "RedHat" and service_name.stdout[0:7]|lower == "mariadb" and ansible_distribution_major_version == "6"
+  when: service_name.stdout[0:7]|lower == "mariadb" and ansible_distribution_major_version == "6"
   tags: mysql_upgrade
 
 - name: Set MariaDB name on RHEL 7
   set_fact:
     mysql_service_name: "mariadb.service"
-  when: ansible_os_family == "RedHat" and service_name.stdout[0:7]|lower == "mariadb" and ansible_distribution_major_version == "7"
+  when: service_name.stdout[0:7]|lower == "mariadb" and ansible_distribution_major_version == "7"
+  failed_when: False
   tags: mysql_upgrade
 
 - name: Set Percona name
@@ -35,10 +35,16 @@
 
 - name: Install MySQL Python on RHEL
   yum:
-    name=MySQL-python
-    state=present
+    name: MySQL-python
+    state: present
   when: ansible_os_family == "RedHat"
   tags: mysql_upgrade
+
+- name: Install Python SSL on RHEL 5
+  yum:
+    name: python-ssl
+    state: present
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "5"
 
 - name: Get MySQL info
   mysql_variables:
@@ -46,6 +52,7 @@
   with_items:
     - datadir
     - version
+    - tmpdir
   register: mysql_vars
   tags: mysql_upgrade
 
@@ -90,6 +97,10 @@
 
 - name: dbsake
   include: dbsake.yml
+  tags: mysql_upgrade
+
+- name: Upgrade my.cnf
+  include: upgrade_mycnf.yml
   tags: mysql_upgrade
 
 - name: Upgrade MySQL

@@ -1,0 +1,14 @@
+---
+- name: Check tmp folder still there
+  stat:
+    path: "{{ mysql_vars['results'][2]['msg'][0][1] }}"
+  register: check_tmp
+  failed_when: False
+
+- name: Create tmp folder if doesn't exist
+  file:
+    name: "{{ mysql_vars['results'][2]['msg'][0][1] }}"
+    owner: mysql
+    group: mysql
+    state: directory
+  when: check_tmp.stat.exists == 0

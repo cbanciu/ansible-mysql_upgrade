@@ -1,4 +1,8 @@
 ---
-- name: Remove old Percona packages
-  shell: rpm -e --nodeps $(rpm -qa | grep ^Percona-Server)
-  when: service_name['stdout_lines'][0]|lower == 'percona'
+- name: Remove old packages
+  shell: rpm -e --nodeps $(rpm -qa | egrep "(mysql-|mysql51-|mysql55-|mysql56u-|Percona-Server-|MariaDB-)")
+
+- name: Remove mysqclient15 from RHEL5
+  shell: rpm -e --nodeps mysqlclient15
+  when: ansible_distribution_major_version == "5"
+  failed_when: False

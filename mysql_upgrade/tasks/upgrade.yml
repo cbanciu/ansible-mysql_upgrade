@@ -1,4 +1,7 @@
 ---
+- name: Check tmp and symlinks
+  include: check_tmp.yml
+
 - name: Restart MySQL
   service:
     name: "{{ mysql_service_name }}"

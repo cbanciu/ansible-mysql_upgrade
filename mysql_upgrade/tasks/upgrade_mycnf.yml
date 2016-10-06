@@ -4,16 +4,16 @@
   tags: upgrade_mycnf
 
 - name: Upgrade 5.1 to 5.5
-  shell: /root/dbsake upgrade-mycnf -c "{{ my_cnf }}" -t 5.5 > /etc/my.cnf55
-  when: mysql_version == "5.1"
+  shell: python /root/upgrade_mysql_config.py --config "{{ my_cnf }}" --target 5.5 > /etc/my.cnf55
+  when: mysql_version.startswith("5.1")
   tags: upgrade_mycnf
 
 - name: Upgrade 5.5 to 5.6
-  shell: /root/dbsake upgrade-mycnf -c "{{ my_cnf }}" -t 5.6 > /etc/my.cnf56
-  when: mysql_version == "5.5"
+  shell: python /root/upgrade_mysql_config.py --config "{{ my_cnf }}" --target 5.6 > /etc/my.cnf56
+  when: mysql_version.startswith("5.5")
   tags: upgrade_mycnf
 
 - name: Upgrade 5.6 to 5.7
-  shell: /root/dbsake upgrade-mycnf -c "{{ my_cnf }}" -t 5.7 > /etc/my.cnf57
-  when: mysql_version == "5.6"
+  shell: python /root/upgrade_mysql_config.py --config "{{ my_cnf }}" --target 5.7 > /etc/my.cnf57
+  when: mysql_version.startswith("5.6")
   tags: upgrade_mycnf

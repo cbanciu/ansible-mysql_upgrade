@@ -4,11 +4,11 @@
   when: (upgraded_version in [5.5, 5.6, 5.7]) and (mysql_version.startswith("5.1"))
 
 - name: Upgrade to Percona 5.6
-  include: mysql56.yml
+  include: percona56.yml
   when: upgraded_version in [5.6, 5.7] and ansible_distribution_major_version in ["6", "7"] and mysql_version.startswith("5.5")
 
 - name: Upgrade to Percona 5.7
-  include: mysql57.yml
+  include: percona57.yml
   when: upgraded_version in [5.7] and  ansible_distribution_major_version in ["6", "7"] and mysql_version.startswith("5.6")
 
 - name: Install Percona-shared-compat

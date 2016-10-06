@@ -1,6 +1,6 @@
 ---
 - name: Upgrade Percona my.cnf to 5.7
-  shell: /root/dbsake upgrade-mycnf -c "{{ my_cnf }}" -t 5.7 > /etc/my.cnf57
+  shell: python /root/upgrade_mysql_config.py --config "{{ my_cnf }}" --target 5.7 > /etc/my.cnf57
 
 - name: Remove old Percona packages
   include: remove.yml
