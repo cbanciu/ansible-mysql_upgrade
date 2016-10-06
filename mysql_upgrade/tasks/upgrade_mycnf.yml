@@ -5,7 +5,7 @@
 
 - name: Upgrade 5.1 to 5.5
   shell: python /root/upgrade_mysql_config.py --config "{{ my_cnf }}" --target 5.5 > /etc/my.cnf55
-  when: mysql_version.startswith("5.1")
+  when: mysql_version.startswith("5.1") or (upgraded_version in [10.0, 10.1])
   tags: upgrade_mycnf
 
 - name: Upgrade 5.5 to 5.6
