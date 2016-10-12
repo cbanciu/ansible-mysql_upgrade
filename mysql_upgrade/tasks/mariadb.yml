@@ -1,0 +1,41 @@
+---
+- name: Check if Maria repo file exist
+  shell: "grep -l $(yum repolist | egrep -i maria | awk '{print $1}') *.repo"
+  args:
+    chdir: /etc/yum.repos.d/
+  failed_when: False
+  register: maria_repo
+
+- name: Set Maria repository
+  set_fact:
+    repository: "{{ maria_repo['stdout'] | default('MariaDB.repo', true) }}"
+
+- name: Set RHEL fact
+  set_fact:
+    vendor: rhel
+  when: ansible_distribution == "RedHat"
+
+- name: Set CentOS
+  set_fact:
+    vendor: centos
+  when: ansible_distribution == "CentOS"
+
+- name: Copy Maria repo
+  template:
+    src: MariaDB.repo.j2
+    dest: /etc/yum.repos.d/{{ repository }}
+    backup: yes
+
+- name: Clean yum cache
+  shell: yum clean all
+
+- name: Install MySQL {{ repo }} from MariaDB repository
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - MariaDB-server
+    - MariaDB-client
+    - MariaDB-shared
+    - MariaDB-compat
+    - MariaDB-common

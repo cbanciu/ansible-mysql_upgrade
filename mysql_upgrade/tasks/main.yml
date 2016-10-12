@@ -11,13 +11,13 @@
 - name: Set MariaDB name on RHEL 6
   set_fact:
     mysql_service_name: "mysql"
-  when: service_name.stdout[0:7]|lower == "mariadb" and ansible_distribution_major_version == "6"
+  when: service_name.stdout[0:5]|lower == "maria" and ansible_distribution_major_version == "6"
   tags: mysql_upgrade
 
 - name: Set MariaDB name on RHEL 7
   set_fact:
     mysql_service_name: "mariadb.service"
-  when: service_name.stdout[0:7]|lower == "mariadb" and ansible_distribution_major_version == "7"
+  when: service_name.stdout[0:5]|lower == "maria" and ansible_distribution_major_version == "7"
   failed_when: False
   tags: mysql_upgrade
 

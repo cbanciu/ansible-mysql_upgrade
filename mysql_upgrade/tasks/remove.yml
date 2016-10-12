@@ -1,6 +1,6 @@
 ---
 - name: Remove old packages
-  shell: rpm -e --nodeps $(rpm -qa | egrep "(mysql-|mysql51-|mysql55-|mysql56u-|Percona-Server-|MariaDB-)")
+  shell: rpm -e --nodeps $(rpm -qa | egrep "(mysql-|mysql51-|mysql55-|mysql56u-|Percona-Server-|MariaDB-|mariadb)")
 
 - name: Remove mysqclient15 from RHEL5
   shell: rpm -e --nodeps mysqlclient15

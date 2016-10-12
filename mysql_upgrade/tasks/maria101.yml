@@ -2,19 +2,19 @@
 - name: Remove old MariaDB packages
   include: remove.yml
 
-- name: Install MariaDB 10.0 from IUS on 7
+- name: Install MariaDB 10.1 from IUS on 7
   yum:
     name: "{{ item }}"
     state: present
   with_items:
-    - mariadb100u
-    - mariadb100u-server
-    - mariadb100u-libs
+    - mariadb101u
+    - mariadb101u-server
+    - mariadb101u-libs
   when: ansible_distribution_major_version == "7"
 
 - name: Set repo for Maria
   set_fact:
-    repo: "10.0"
+    repo: "10.1"
   when: ansible_distribution_major_version in ["5", "6"]
 
 - name: Install MariaDB from Maria repo
