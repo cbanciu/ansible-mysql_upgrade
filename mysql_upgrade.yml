@@ -1,6 +1,6 @@
 ---
   - hosts: all
-    user:
+    user: root
     become: yes
     roles:
       - { role: mysql_upgrade, tags: mysql_upgrade }

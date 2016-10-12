@@ -1,0 +1,25 @@
+---
+- name: Copy MySQL GPG key
+  copy:
+    src: RPM-GPG-KEY-mysql
+    dest: /etc/pki/rpm-gpg/RPM-GPG-KEY-mysql
+    mode: 0600
+    backup: yes
+
+- name: Enable MySQL community repo
+  template:
+    src: mysql-community.repo.j2
+    dest: /etc/yum.repos.d/mysql-community.repo
+
+- name: Import MySQL key
+  rpm_key:
+    key: /etc/pki/rpm-gpg/RPM-GPG-KEY-mysql
+    state: present
+
+- name: Clean yum cache
+  shell: yum clean all
+
+- name: Install MySQL {{ repo }} from Community
+  yum:
+    name: mysql-community-server
+    state: present
