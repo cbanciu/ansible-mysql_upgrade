@@ -1,2 +1,12 @@
 ---
-- debug: msg="MariaDB"
+- name: Add IUS when RHEL/CentOS 7
+  include: ius.yml
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"
+
+- name: Upgrade to Maria 10.0
+  include: maria100.yml
+  when: (upgraded_version in [10.0, 10.1]) and (mysql_version.startswith("5.5"))
+
+- name: Upgrade to Maria 10.1
+  include: maria101.yml
+  when: upgraded_version in [10.1] and mysql_version.startswith("10.0")

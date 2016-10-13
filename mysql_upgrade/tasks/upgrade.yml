@@ -1,0 +1,16 @@
+---
+- name: Check tmp and symlinks
+  include: check_tmp.yml
+
+- name: Restart MySQL
+  service:
+    name: "{{ mysql_service_name }}"
+    state: restarted
+
+- name: Run MySQL upgrade
+  shell: mysql_upgrade
+
+- name: Restart MySQL
+  service:
+    name: "{{ mysql_service_name }}"
+    state: restarted

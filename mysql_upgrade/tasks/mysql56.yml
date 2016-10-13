@@ -1,0 +1,34 @@
+---
+- name: Upgrade my.cnf
+  include: upgrade_mycnf.yml
+
+- name: Remove old MySQL 5.5 packages
+  include: remove.yml
+
+- name: Install MySQL 5.6 from IUS
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - mysql56u
+    - mysql56u-server
+    - mysql56u-libs
+  when: ansible_distribution_major_version in ["6", "7"]
+
+- name: Set repo for community
+  set_fact:
+    repo: "5.6"
+
+- name: Install MySQL 5.6 from MySQL repo
+  include: community.yml
+  when: ansible_distribution_major_version == "5"
+
+- name: Update my.cnf
+  shell: cp -a /etc/my.cnf56 "{{ my_cnf }}"
+
+- name: Run mysql_upgrade
+  include: upgrade.yml
+
+- name: Set mysql_version
+  set_fact:
+    mysql_version: "5.6"

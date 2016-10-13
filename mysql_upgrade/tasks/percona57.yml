@@ -1,0 +1,25 @@
+---
+- name: Upgrade Percona my.cnf to 5.7
+  shell: python /root/upgrade_mysql_config.py --config "{{ my_cnf }}" --target 5.7 > /etc/my.cnf57
+
+- name: Remove old Percona packages
+  include: remove.yml
+
+- name: Install Percona 5.7
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - Percona-Server-server-57
+    - Percona-Server-client-57
+    - Percona-Server-shared-57
+
+- name: Update my.cnf
+  shell: cp -a /etc/my.cnf57 "{{ my_cnf }}"
+
+- name: Run mysql_upgrade
+  include: upgrade.yml
+
+- name: Set mysql_version
+  set_fact:
+    mysql_version: "5.7"
