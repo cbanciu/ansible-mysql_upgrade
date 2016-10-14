@@ -1,4 +1,7 @@
 ---
+- name: Upgrade my.cnf.
+  include: upgrade_mycnf.yml
+
 - name: Remove old MariaDB packages
   include: remove.yml
 
