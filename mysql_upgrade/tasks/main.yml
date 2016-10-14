@@ -1,13 +1,4 @@
 ---
-#- name: Check/disable yum.conf exclusions.
-#  replace:
-#    dest: /etc/yum.conf
-#    #regexp: "^[# \t]*(exclude=)(.*)mysql([a-zA-Z0-9_*-]*)(.*)"
-#    regexp: "^[# \t]*(exclude=)(.*)mysql[a-zA-Z0-9_*-]*(.*)"
-#    #backrefs: yes
-#    replace: '\1\2\3'
-#    backup: yes
-
 - name: Fail if not RHEL
   fail: msg="This playbook only runs on RHEL like servers."
   when: ansible_os_family != "RedHat"
@@ -109,6 +100,9 @@
     src: upgrade_mysql_config.py
     dest: /root/upgrade_mysql_config.py
 
+- name: Backup yum.conf and remove MySQL exclusions
+  shell: /bin/cp -f /etc/yum.conf /etc/yum.conf.ansible && sed -i 's/mysql[^ \s]*\|percona[^ \s]*\|maria[^ \s]*//gI' /etc/yum.conf
+
 - name: Upgrade MySQL
   include: mysql.yml
   when: service_name['stdout_lines'][0][0:5] == 'mysql'
@@ -123,3 +117,6 @@
   include: maria.yml
   when: service_name['stdout_lines'][0][0:5]|lower == 'maria'
   tags: mysql_upgrade
+
+- name: Restore yum.conf
+  shell: /bin/mv -f /etc/yum.conf.ansible /etc/yum.conf
