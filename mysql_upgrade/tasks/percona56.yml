@@ -1,6 +1,6 @@
 ---
-- name: Upgrade Percona my.cnf to 5.6
-  shell: python /root/upgrade_mysql_config.py --config "{{ my_cnf }}" --target 5.6 > /etc/my.cnf56
+- name: Upgrade my.cnf
+  include: upgrade_mycnf.yml
 
 - name: Remove old Percona packages
   include: remove.yml
@@ -15,7 +15,7 @@
     - Percona-Server-shared-56
 
 - name: Update my.cnf
-  shell: cp -a /etc/my.cnf56 "{{ my_cnf }}"
+  shell: cp -a /etc/ansible_my.cnf56 "{{ my_cnf }}"
 
 - name: Run mysql_upgrade
   include: upgrade.yml

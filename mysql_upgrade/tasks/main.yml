@@ -95,13 +95,13 @@
   poll: 10
   tags: mysql_upgrade
 
-- name: dbsake
-  include: dbsake.yml
-  tags: mysql_upgrade
+- name: Download upgrade_mysql_config.py
+  copy:
+    src: upgrade_mysql_config.py
+    dest: /root/upgrade_mysql_config.py
 
-- name: Upgrade my.cnf
-  include: upgrade_mycnf.yml
-  tags: mysql_upgrade
+- name: Backup yum.conf and remove MySQL exclusions
+  shell: /bin/cp -f /etc/yum.conf /etc/yum.conf.ansible && sed -i 's/mysql[^ \s]*\|percona[^ \s]*\|maria[^ \s]*//gI' /etc/yum.conf
 
 - name: Upgrade MySQL
   include: mysql.yml
@@ -117,3 +117,6 @@
   include: maria.yml
   when: service_name['stdout_lines'][0][0:5]|lower == 'maria'
   tags: mysql_upgrade
+
+- name: Restore yum.conf
+  shell: /bin/mv -f /etc/yum.conf.ansible /etc/yum.conf

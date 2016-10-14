@@ -9,6 +9,8 @@
 
 - name: Run MySQL upgrade
   shell: mysql_upgrade
+  async: "{{ backup_time | default(7200, true) }}"
+  poll: 10
 
 - name: Restart MySQL
   service:
