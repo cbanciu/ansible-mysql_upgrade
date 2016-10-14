@@ -1,6 +1,0 @@
----
-- name: Download upgrade_mysql_config.py
-  copy:
-    src: upgrade_mysql_config.py
-    dest: /root/upgrade_mysql_config.py
-  register: upgrade_mysql_config
