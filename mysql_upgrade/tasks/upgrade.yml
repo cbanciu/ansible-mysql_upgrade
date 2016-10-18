@@ -11,6 +11,13 @@
   shell: mysql_upgrade
   async: "{{ backup_time | default(7200, true) }}"
   poll: 10
+  when: mysql_master == "No"
+
+- name: Run MySQL upgrade
+  shell: mysql_upgrade --skip-write-binlog
+  async: "{{ backup_time | default(7200, true) }}"
+  poll: 10
+  when: mysql_master == "Yes" 
 
 - name: Restart MySQL
   service:

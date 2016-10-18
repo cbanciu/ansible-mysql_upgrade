@@ -33,6 +33,9 @@
   when: ansible_os_family == "RedHat" and service_name.stdout[0:5]|lower == "mysql"
   tags: mysql_upgrade
 
+- name: Backup yum.conf and remove MySQL exclusions
+  shell: /bin/cp -f /etc/yum.conf /etc/yum.conf.ansible && sed -i 's/mysql[^ \s]*\|percona[^ \s]*\|maria[^ \s]*//gI' /etc/yum.conf
+
 - name: Install MySQL Python on RHEL
   yum:
     name: MySQL-python
@@ -99,9 +102,6 @@
   copy:
     src: upgrade_mysql_config.py
     dest: /root/upgrade_mysql_config.py
-
-- name: Backup yum.conf and remove MySQL exclusions
-  shell: /bin/cp -f /etc/yum.conf /etc/yum.conf.ansible && sed -i 's/mysql[^ \s]*\|percona[^ \s]*\|maria[^ \s]*//gI' /etc/yum.conf
 
 - name: Upgrade MySQL
   include: mysql.yml

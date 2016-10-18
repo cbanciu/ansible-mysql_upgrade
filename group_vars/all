@@ -1,4 +1,5 @@
 backup_method:
 backup_time:
-upgrade_version:
+upgrade_version: "10.1"
+mysql_master: "No"
 my_cnf: /etc/my.cnf
