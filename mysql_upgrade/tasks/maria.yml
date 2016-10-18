@@ -5,8 +5,8 @@
 
 - name: Upgrade to Maria 10.0
   include: maria100.yml
-  when: (upgraded_version in ["10.0", "10.1"]) and (mysql_version.startswith("5.5"))
+  when: (upgrade_version in ["10.0", "10.1"]) and (mysql_version.startswith("5.5"))
 
 - name: Upgrade to Maria 10.1
   include: maria101.yml
-  when: upgraded_version in ["10.1"] and mysql_version.startswith("10.0")
+  when: upgrade_version in ["10.1"] and mysql_version.startswith("10.0")

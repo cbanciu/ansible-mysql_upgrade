@@ -4,12 +4,14 @@
 
 - name: Upgrade to MySQL 5.5
   include: mysql55.yml
-  when: (upgraded_version in ["5.5", "5.6", "5.7"]) and (mysql_version.startswith("5.1"))
+  when: (upgrade_version in ["5.5", "5.6", "5.7"]) and (mysql_version.startswith("5.1"))
 
 - name: Upgrade to MySQL 5.6
   include: mysql56.yml
-  when: upgraded_version in ["5.6", "5.7"] and mysql_version.startswith("5.5")
+  when: upgrade_version in ["5.6", "5.7"] and mysql_version.startswith("5.5")
+
+- fail: msg="{{ upgraded_version }}"
 
 - name: Upgrade to MySQL 5.7
   include: mysql57.yml
-  when: upgraded_version in ["5.7"] and mysql_version.startswith("5.6")
+  when: upgrade_version in ["5.7"] and mysql_version.startswith("5.6")

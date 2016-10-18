@@ -1,4 +1,4 @@
 backup_method:
 backup_time:
-upgraded_version:
+upgrade_version:
 my_cnf: /etc/my.cnf
