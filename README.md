@@ -22,5 +22,6 @@ It DOES NOT upgrade from one vendor to another such as from MySQL to Percona.
 **backup_method: [rsync|holland]** => MySQL DATADIR backup method.  
 **backup_time:** => Value in seconds for long running jobs such as backups or mysql_upgrade. Defaults already set to over 2 hours.  
 **upgrade_version: ["5.5", "5.6", "5.7", "10.0", "10.1"]** => What MySQL version would you like upgrading to?  
+**mysql_master: ["Yes/No"]** => "Yes" for MASTER server in MASTER-SLAVE replication.  
 **my_cnf: /etc/my.cnf** => Full path to MySQL configuration file.  
 ***
