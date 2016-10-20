@@ -1,6 +1,6 @@
 ---
 - name: Save RPMs
-  shell: rpm -qa | egrep "(mysql-|mysql51-|mysql55-|mysql56u-|Percona-Server-|MariaDB-|mariadb)" >> /root/mysql_upgrade_rpm.txt
+  shell: rpm -qa | egrep "(mysql-|mysql51-|mysql55-|mysql56u-|Percona-Server-|MariaDB-|mariadb)" >> /home/rack/{{ticket_no}}/mysql_upgrade_rpm.txt
 
 - name: Remove old packages
   shell: rpm -e --nodeps $(rpm -qa | egrep -i "(mysql-|mysql51-|mysql55-|mysql56u-|Percona-Server-|MariaDB-|mariadb)")
