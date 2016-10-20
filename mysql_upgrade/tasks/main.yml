@@ -3,6 +3,11 @@
   fail: msg="This playbook only runs on RHEL like servers."
   when: ansible_os_family != "RedHat"
 
+- name: Create ticket folder
+  file:
+    path: "/home/rack/{{ ticket_no }}"
+    state:  directory
+
 - name: Get service name
   shell: rpm -qa | egrep -i "maria|mysql|percona" | grep server | cut -d- -f1
   register: service_name
@@ -101,7 +106,7 @@
 - name: Download upgrade_mysql_config.py
   copy:
     src: upgrade_mysql_config.py
-    dest: /root/upgrade_mysql_config.py
+    dest: "/home/rack/{{ticket_no}}/upgrade_mysql_config.py"
 
 - name: Upgrade MySQL
   include: mysql.yml
