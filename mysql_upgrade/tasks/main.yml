@@ -3,6 +3,9 @@
   fail: msg="This playbook only runs on RHEL like servers."
   when: ansible_os_family != "RedHat"
 
+- name: Display rollback information
+  include: rollback.yml
+
 - name: Create ticket folder
   file:
     path: "/home/rack/{{ ticket_no }}"
@@ -125,3 +128,6 @@
 
 - name: Restore yum.conf
   shell: /bin/mv -f /etc/yum.conf.ansible /etc/yum.conf
+
+- name: Display rollback information
+  include: rollback.yml

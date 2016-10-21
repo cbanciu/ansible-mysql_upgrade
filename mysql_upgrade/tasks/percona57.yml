@@ -13,6 +13,7 @@
     - Percona-Server-server-57
     - Percona-Server-client-57
     - Percona-Server-shared-57
+  register: mysql_packages
 
 - name: Update my.cnf
   shell: cp -a /etc/ansible_my.cnf57 "{{ my_cnf }}"
