@@ -25,7 +25,7 @@
   when: ansible_distribution_major_version in ["5", "6"]
 
 - name: Update my.cnf
-  shell: cp -a /etc/ansible_my.cnf56 "{{ my_cnf }}"
+  shell: cp -a /home/rack/{{ticket_no}}/ansible_my.cnf56 "{{ my_cnf }}"
 
 - name: Run mysql_upgrade
   include: upgrade.yml

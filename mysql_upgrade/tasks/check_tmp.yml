@@ -12,3 +12,16 @@
     group: mysql
     state: directory
   when: check_tmp.stat.exists == 0
+
+- name: Remove folder if symlink
+  file:
+    path: "{{ mysql_vars['results'][0]['msg'][0][1][:-1] }}"
+    state: absent
+  when: datadir_symlink.stat.islnk
+
+- name: Set real_path if symlink
+  file: 
+    src: "{{ datadir_symlink['stat']['lnk_source'] }}"
+    dest: "{{ mysql_vars['results'][0]['msg'][0][1][:-1] }}"
+    state: link
+  when: datadir_symlink.stat.islnk

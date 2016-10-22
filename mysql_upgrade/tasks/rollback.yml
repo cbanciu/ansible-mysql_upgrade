@@ -3,5 +3,4 @@
   command: sed '/####/Q' /home/rack/{{ticket_no}}/mysql_upgrade_rpm.txt
   register: rollback
 
-- debug: msg="{{ rollback.stdout_lines[0] }}"
-- fail: msg="test"
+- debug: msg="Reinstall the folowing RPMs and restore from the backup taken to rollback {{ rollback.stdout_lines }}"

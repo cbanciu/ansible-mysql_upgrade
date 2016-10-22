@@ -1,19 +1,19 @@
 ---
 - name: Backup existing my.cnf
-  shell: cp -aL "{{ my_cnf }}" /etc/my.cnf.$(date +%Y%m%d)
+  shell: cp -aL "{{ my_cnf }}" /home/rack/{{ticket_no}}/my.cnf.$(date +%Y%m%d)
   tags: upgrade_mycnf
 
 - name: Upgrade 5.1 to 5.5
-  shell: python /home/rack/{{ticket_no}}/upgrade_mysql_config.py --config "{{ my_cnf }}" --target 5.5 > /etc/ansible_my.cnf55
+  shell: python /home/rack/{{ticket_no}}/upgrade_mysql_config.py --config "{{ my_cnf }}" --target 5.5 > /home/rack/{{ticket_no}}/ansible_my.cnf55
   when: mysql_version.startswith("5.1")
   tags: upgrade_mycnf
 
 - name: Upgrade 5.5 to 5.6
-  shell: python /home/rack/{{ticket_no}}/upgrade_mysql_config.py --config "{{ my_cnf }}" --target 5.6 > /etc/ansible_my.cnf56
+  shell: python /home/rack/{{ticket_no}}/upgrade_mysql_config.py --config "{{ my_cnf }}" --target 5.6 > "/home/rack/{{ticket_no}}/ansible_my.cnf56"
   when: mysql_version.startswith("5.5") or mysql_version.startswith("10.0")
   tags: upgrade_mycnf
 
 - name: Upgrade 5.6 to 5.7
-  shell: python /home/rack/{{ticket_no}}/upgrade_mysql_config.py --config "{{ my_cnf }}" --target 5.7 > /etc/ansible_my.cnf57
+  shell: python /home/rack/{{ticket_no}}/upgrade_mysql_config.py --config "{{ my_cnf }}" --target 5.7 > /home/rack/{{ticket_no}}/ansible_my.cnf57
   when: mysql_version.startswith("5.6")
   tags: upgrade_mycnf

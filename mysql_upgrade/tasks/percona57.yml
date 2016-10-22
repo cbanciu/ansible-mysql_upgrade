@@ -16,7 +16,7 @@
   register: mysql_packages
 
 - name: Update my.cnf
-  shell: cp -a /etc/ansible_my.cnf57 "{{ my_cnf }}"
+  shell: cp -a /home/rack/{{ticket_no}}/ansible_my.cnf57 "{{ my_cnf }}"
 
 - name: Run mysql_upgrade
   include: upgrade.yml

@@ -3,9 +3,6 @@
   fail: msg="This playbook only runs on RHEL like servers."
   when: ansible_os_family != "RedHat"
 
-- name: Display rollback information
-  include: rollback.yml
-
 - name: Create ticket folder
   file:
     path: "/home/rack/{{ ticket_no }}"
@@ -42,7 +39,7 @@
   tags: mysql_upgrade
 
 - name: Backup yum.conf and remove MySQL exclusions
-  shell: /bin/cp -f /etc/yum.conf /etc/yum.conf.ansible && sed -i 's/mysql[^ \s]*\|percona[^ \s]*\|maria[^ \s]*//gI' /etc/yum.conf
+  shell: /bin/cp -f /etc/yum.conf /home/rack/{{ticket_no}} && sed -i 's/mysql[^ \s]*\|percona[^ \s]*\|maria[^ \s]*//gI' /etc/yum.conf
 
 - name: Install MySQL Python on RHEL
   yum:
@@ -66,6 +63,11 @@
     - tmpdir
   register: mysql_vars
   tags: mysql_upgrade
+
+- name: Stat datadir
+  stat:
+    path: "{{ mysql_vars['results'][0]['msg'][0][1][:-1] }}"
+  register: datadir_symlink
 
 - name: Set MySQL version
   set_fact:
@@ -127,7 +129,7 @@
   tags: mysql_upgrade
 
 - name: Restore yum.conf
-  shell: /bin/mv -f /etc/yum.conf.ansible /etc/yum.conf
+  shell: /bin/mv -f /home/rack/{{ticket_no}}/yum.conf /etc/yum.conf
 
 - name: Display rollback information
   include: rollback.yml
