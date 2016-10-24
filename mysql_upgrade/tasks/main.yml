@@ -89,7 +89,7 @@
 - name: Backup using rsync
   shell: rsync -a {{ mysql_vars['results'][0]['msg'][0][1] }} {{ mysql_vars['results'][0]['msg'][0][1][:-1] }}.$(echo $(date +"%y%m%d-%H%M"))
   when: mysql_status.changed
-  async: "{{ backup_time | default(10800, true) }}"
+  async: "{{ backup_time | default(28800, true) }}"
   poll: 10
   tags: mysql_upgrade
 
@@ -104,7 +104,7 @@
 - name: Backup using holland
   shell: holland bk
   when: backup_method|lower == "holland"
-  async: "{{ backup_time | default(7200, true) }}"
+  async: "{{ backup_time | default(28800, true) }}"
   poll: 10
   tags: mysql_upgrade
 
