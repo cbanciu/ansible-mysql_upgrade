@@ -13,14 +13,18 @@
     state: directory
   when: check_tmp.stat.exists == 0
 
-- name: Remove folder if symlink
-  file:
-    path: "{{ mysql_vars['results'][0]['msg'][0][1][:-1] }}"
-    state: absent
+#- name: Remove folder if symlink
+#  file:
+#    path: "{{ mysql_vars['results'][0]['msg'][0][1][:-1] }}"
+#    state: absent
+#  when: datadir_symlink.stat.islnk
+
+- name: Rename folder if symlink
+  shell: mv {{ mysql_vars['results'][0]['msg'][0][1] }} {{ mysql_vars['results'][0]['msg'][0][1][:-1] }}.$(date +"%y%m%d-%H%M%S")
   when: datadir_symlink.stat.islnk
 
 - name: Set real_path if symlink
-  file: 
+  file:
     src: "{{ datadir_symlink['stat']['lnk_source'] }}"
     dest: "{{ mysql_vars['results'][0]['msg'][0][1][:-1] }}"
     state: link

@@ -1,6 +1,6 @@
 backup_method:
 backup_time:
 upgrade_version: "5.6"
-mysql_master: "No"
+mysql_master: "Yes"
 ticket_no:
 my_cnf: /etc/my.cnf
