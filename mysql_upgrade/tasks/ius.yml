@@ -1,9 +1,19 @@
 ---
+- name: Check if EPEL is installed
+  shell: yum repolist | egrep -i epel | awk '{print $1}'
+  register: epel_repo
+  failed_when: false
+
+- name: Check if IUS is installed
+  shell: yum repolist | egrep -i ius | awk '{print $1}'
+  register: ius_repo
+  failed_when: false
+
 - name: install EPEL release package for RHEL
   yum:
     name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
     state: latest
-  when: ansible_distribution == 'Red Hat Enterprise Linux'
+  when: epel_repo|failed
 
 - set_fact:
     ius_distribution_abbrev: "{{ (ansible_distribution == 'CentOS') | ternary('centos', 'rhel') }}"
@@ -14,4 +24,4 @@
   yum:
     name: "https://{{ ius_distribution_abbrev }}{{ ansible_distribution_major_version }}.iuscommunity.org/ius-release.rpm"
     state: present
-  when: ansible_os_family == 'RedHat'
+  when: ius_repo|failed
