@@ -102,7 +102,7 @@
   tags: mysql_upgrade
 
 - name: Backup using holland
-  shell: holland bk
+  shell: /usr/sbin/holland bk
   when: backup_method|lower == "holland"
   async: "{{ backup_time | default(28800, true) }}"
   poll: 10
